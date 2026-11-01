@@ -1,0 +1,44 @@
+application:
+  subdomain: trilium
+  multi_instance: false
+  # Trilium keeps no headless API for normal use: the editor, sync and setup
+  # wizard are all reached from the browser on the app root, so this package
+  # declares no upstream prefixes and relies on the platform entry login.
+  upstreams:
+    - location: /package-licenses/
+      backend: file:///lzcapp/pkg/content/licenses/
+    - location: /
+      backend: http://trilium:8080/
+
+services:
+  trilium:
+    # upstream: ghcr.io/triliumnext/trilium:v0.106.1
+    image: ghcr.1ms.run/triliumnext/trilium:v0.106.1
+    environment:
+      - TRILIUM_DATA_DIR=/data
+    # The image starts as root and drops to the upstream node account (uid 1000)
+    # through its own entrypoint, which only chowns /home/node. Make the bound
+    # data directory writable for that same original account; the runtime
+    # identity itself is left untouched.
+    setup_script: |
+      mkdir -p /data
+      chown -R 1000:1000 /data
+    binds:
+      - /lzcapp/var/data:/data
+
+usage: |
+  Trilium 是层级式个人知识库（笔记树 + 富文本/Markdown + 关系图谱 + 脚本），数据库为内置加密 SQLite。
+
+  首次使用：
+  1. 打开应用后进入设置向导，选择语言，然后选择「创建新的知识库」。
+  2. 按向导设置登录密码；这个密码用于解锁知识库，请务必牢记，丢失后无法恢复。
+  3. 完成后即可在笔记树里记录内容，支持导入 Markdown、Evernote 等格式。
+
+  数据与安全：
+  - 全部笔记、附件、配置和加密数据库都保存在 /lzcapp/var/data，卸载应用会一并删除，请定期从应用内导出备份。
+  - 本包不预置密码、不自动创建账号，也不做登录填充：设置向导和登录都由你本人在浏览器里完成。
+  - 应用经懒猫入口鉴权访问，未额外开放无需登录的接口路径。
+
+  说明：
+  - 知识库密码与懒猫账号无关，是本应用自己的加密口令。
+  - 未做真机验证：首次设置向导、密码设置、笔记增删改、导入导出、脚本执行以及重启后持久化均未在设备上实测。

@@ -1,0 +1,18 @@
+package: community.lazycat.app.trilium
+version: 0.106.1
+name: Trilium
+description: "Hierarchical personal knowledge base with notes, scripting and an encrypted database."
+min_os_version: "1.5.0"
+homepage: https://github.com/TriliumNext/Trilium
+author: TriliumNext
+license: AGPL-3.0
+permissions:
+  required:
+    - net.internet
+locales:
+  zh:
+    name: Trilium
+    description: "层级式个人知识库，支持富文本笔记、关系图谱、脚本扩展与加密数据库。"
+  en:
+    name: Trilium
+    description: "Hierarchical personal knowledge base with notes, scripting and an encrypted database."
